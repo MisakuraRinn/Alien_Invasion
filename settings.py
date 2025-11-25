@@ -1,7 +1,15 @@
-#code=GBK
+#coding=GBK
 class Settings:
-  # 存参数
   def __init__(self):
     self.screen_width=1200
     self.screen_height=800
     self.bg_color=(230,230,230)
+    
+    #飞船速度
+    self.ship_speed=10
+    
+    #子弹设置
+    self.bullet_speed=2.0
+    self.bullet_width=3
+    self.bullet_height=15
+    self.bullet_color=(60,60,60)
