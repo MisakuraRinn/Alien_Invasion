@@ -1,3 +1,4 @@
+#coding=GBK
 import pygame
 from pygame.sprite import Sprite
 
