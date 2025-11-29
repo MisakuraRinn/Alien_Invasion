@@ -2,6 +2,7 @@
 import pygame.font
 from pygame.sprite import Group
 from ship import Ship
+from bullet import Bullet
 class Scoreboard:
   """显示得分信息的类"""
   def __init__(self,ai_game):
@@ -18,6 +19,7 @@ class Scoreboard:
     self.prep_high_score()
     self.prep_level()
     self.prep_ships()
+    self.prep_ammo()
   def prep_score(self):
     """将得分渲染为图像"""  
     rounded_score=round(self.stats.score,-1)
@@ -40,10 +42,18 @@ class Scoreboard:
     self.level_rect=self.level_image.get_rect()
     self.level_rect.right=self.score_rect.right
     self.level_rect.top=self.score_rect.bottom+10
+  def prep_ammo(self):
+    self.ammo_left=Group()
+    for ammo_number in range(self.settings.ammo_left):
+      ammo=Bullet(self.ai_game)
+      ammo.rect.x=10+ammo_number*(ammo.rect.width+3)
+      ammo.rect.y=80
+      self.ammo_left.add(ammo)
+    
   def prep_ships(self):
     self.ships=Group()
     for ship_number in range(self.stats.ships_left):
-      print(self.stats.ships_left)
+      # print(self.stats.ships_left)
       ship=Ship(self.ai_game)
       ship.rect.x=10+ship_number*ship.rect.width
       ship.rect.y=10
@@ -54,6 +64,9 @@ class Scoreboard:
     self.screen.blit(self.score_image,self.score_rect)
     self.screen.blit(self.level_image,self.level_rect)
     self.ships.draw(self.screen)
+    for bullet in self.ammo_left.sprites():
+      bullet.draw_bullet()
+    # self.ammo_left.draw_bullet()
   def check_high_score(self):
     """检查是否诞生了最高分"""
     if self.stats.score>self.stats.high_score:

@@ -13,7 +13,7 @@ class Ship(Sprite):
     self.rect.midbottom=self.screen_rect.midbottom
     self.moving_right=False
     self.moving_left=False
-    
+    # self.sound_machinegunBrust1=pygame.mixer.Sound("voices/MachineGunBurst2.ogg")
     # self.count1=0
     # self.count2=0
   def blitme(self):
