@@ -1,10 +1,20 @@
 #coding=GBK
 import sys
 import time
-import random
+import random 
 import threading
 import pygame
 import math
+import os, sys
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):   # PyInstaller 打包后的临时目录
+        base = sys._MEIPASS
+    else:
+        base = os.path.dirname(__file__)
+    return os.path.join(base, relative_path)
+
+# sound_path = resource_path(r"voices\machineGun\MachineGunBurst2.ogg")
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
@@ -13,7 +23,7 @@ from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
 from gun import Gun
-
+from rogue import Rogue
 class AlienInvasion:
   """管理游戏资源和行为"""
   def __init__(self):
@@ -25,18 +35,23 @@ class AlienInvasion:
     
     self.channel1=pygame.mixer.Channel(0)
     self.channel2=pygame.mixer.Channel(1)
+    self.channel3=pygame.mixer.Channel(3)
     # pygame.mixer.music.set_volume(1)
     self.clock=pygame.time.Clock()
     self.settings=Settings(self)
     self.screen=pygame.display.set_mode((self.settings.screen_width,self.settings.screen_height))
+    self.se_hit=pygame.mixer.Sound(resource_path(r"voices/hit/Hit_Metal_HighPitch3.ogg"))
     self.game_active=False
     self.stats=GameStats(self)
     self.sb=Scoreboard(self)
     self.ship=Ship(self)
     self.gun=Gun(self)
+    self.rogue=Rogue(self)
     self.bullets=pygame.sprite.Group()
     self.aliens=pygame.sprite.Group()
     self.play_button=Button(self,"Play")
+    
+    self.is_choosing_buff=False
     
     self.is_shooting=False
     self.shoot_time1=time.time()
@@ -55,12 +70,11 @@ class AlienInvasion:
       # 监听事件
       # sys("cls")
       self._check_events()
-      if self.game_active:
+      if self.game_active and not self.is_choosing_buff:
         self.ship.update()
         self._update_aliens()
         self._update_bullets()
         self._keep_shooting()
-        
       self._update_screen()
       
       
@@ -80,6 +94,7 @@ class AlienInvasion:
       elif event.type==pygame.MOUSEBUTTONDOWN:
         mouse_pos=pygame.mouse.get_pos()
         self._check_play_button(mouse_pos)
+        self._check_buff_bar_button(mouse_pos)
   
   def _update_screen(self):
     self.screen.fill(self.settings.bg_color)
@@ -92,6 +107,8 @@ class AlienInvasion:
       self.play_button.draw_button()
     
     self.sb.show_score()
+    if self.is_choosing_buff:
+      self.rogue.show_buff()
     pygame.display.flip()
     
       
@@ -115,6 +132,7 @@ class AlienInvasion:
     """响应碰装"""
     collisions=pygame.sprite.groupcollide(self.bullets,self.aliens,False,False)
     if collisions:
+      self.channel3.play(self.se_hit)
       for bullet,aliens in collisions.copy().items():
         # print(f"bullet.health{bullet.health}")
         self.stats.score+=self.settings.alien_points*len(aliens)
@@ -137,11 +155,15 @@ class AlienInvasion:
       self.stats.level+=1
       self.settings.increase_speed()
       self.sb.prep_level()
+      # self.game_active=False
+      self.is_choosing_buff=True
+      self.rogue.add_buff()
+      self.rogue.prep_buff()
   def _boom(self,bullet):
     new_piece=Bullet(self)
     dir=random.randint(0,1)
     new_piece.is_piece=True
-    # new_piece.health=1 
+    new_piece.health=1 
     # new_piece.rect.x=bullet.x-random.uniform(-5,5)
     # new_piece.rect.y=bullet.y-random.uniform(-5,5)
     new_piece.bullet_max_directX=1
@@ -183,6 +205,18 @@ class AlienInvasion:
       self.game_active=False
       pygame.mouse.set_visible(True)
   
+  def _check_buff_bar_button(self,mouse_pos):
+    print("ckp")
+    for i in self.rogue.draw_buff.sprites():
+      buff_bar_clicked=i.rect.collidepoint(mouse_pos)
+      if buff_bar_clicked and self.is_choosing_buff:
+        print("ckp2")
+        buff=i.buff
+        self.gun.weapon_level_up(buff[0],buff[1],buff[2])
+        self.is_choosing_buff=False
+        self.rogue.draw_buff.empty()
+        # self.rogue.prep_buff()
+        break
   def _check_play_button(self,mouse_pos):
     button_clicked=self.play_button.rect.collidepoint(mouse_pos)
     if button_clicked and not self.game_active:
@@ -198,7 +232,7 @@ class AlienInvasion:
       
       self._create_fleet()
       self.ship.center_ship()
-      pygame.mouse.set_visible(False)
+      # pygame.mouse.set_visible(False)
 
   def _keep_shooting(self):
     self.shoot_time2=time.time()
@@ -229,7 +263,7 @@ class AlienInvasion:
   def _change_is_reloading(self):
     self.is_reloading=False
   def _fire_bullet(self):
-    if len(self.bullets)<self.settings.bullet_allowed:               
+    if len(self.bullets)<self.settings.bullet_allowed:                
       # self.channel1.play(self.sound_machinegunBrust[random.randint(0,len(self.sound_machinegunBrust)-1)])
       self.channel1.play(self.gun.current_gun['se_shot'][random.randint(0,-1+len(self.gun.current_gun['se_shot']))])
       self.settings.ammo_left-=1
@@ -244,13 +278,13 @@ class AlienInvasion:
     # self.aliens.add(alien)
     alien=Alien(self)
     alien_width,alien_height=alien.rect.size
-    current_x,current_y=alien_width,-self.settings.screen_height/100
-    while current_y <self.settings.screen_height-4*alien_height:
+    current_x,current_y=alien_width,-self.settings.screen_height/2
+    while current_y <0:
       while current_x <(self.settings.screen_width-2*alien_width):
         self._create_alien(current_x,current_y)
-        current_x+=3*alien_width
+        current_x+=random.uniform(5/self.stats.level,5)*alien_width
       current_x=alien_width
-      current_y+=3*alien_height
+      current_y+=random.randint(1,5)*alien_height
       # print(current_y)
   
   def _create_alien(self,x_position,y_position):
@@ -287,15 +321,15 @@ class AlienInvasion:
       sys.exit()
     if event.key==pygame.K_SPACE and self.game_active:
       self.is_shooting=True
-    if event.key==pygame.K_1 and self.game_active:
+    if event.key==pygame.K_1 and self.gun.weapons["pistol"]["can_use"] and self.game_active:
       self.gun.change_weapon("pistol")
-    if event.key==pygame.K_2 and self.game_active:
+    if event.key==pygame.K_2 and self.gun.weapons["machineGun"]["can_use"] and self.game_active:
       self.gun.change_weapon("machineGun")
-    if event.key==pygame.K_3 and self.game_active:
+    if event.key==pygame.K_3 and self.gun.weapons["shotGun"]["can_use"] and self.game_active:
       self.gun.change_weapon("shotGun")
-    if event.key==pygame.K_4 and self.game_active:
+    if event.key==pygame.K_4 and self.gun.weapons["AssaultRifle"]["can_use"] and self.game_active:
       self.gun.change_weapon("AssaultRifle")
-    if event.key==pygame.K_5 and self.game_active:
+    if event.key==pygame.K_5 and self.gun.weapons["GrenadeLaucher"]["can_use"] and self.game_active:
       self.gun.change_weapon("GrenadeLaucher")
     
       

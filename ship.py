@@ -1,5 +1,13 @@
 #coding=GBK
 import pygame
+import os, sys
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):   # PyInstaller 打包后的临时目录
+        base = sys._MEIPASS
+    else:
+        base = os.path.dirname(__file__)
+    return os.path.join(base, relative_path)
 from pygame.sprite import Sprite
 class Ship(Sprite):
   #管理飞船
@@ -8,7 +16,7 @@ class Ship(Sprite):
     self.screen=ai_game.screen
     self.screen_rect=ai_game.screen.get_rect()
     self.settings=ai_game.settings
-    self.image=pygame.image.load("./images/ship.bmp")
+    self.image=pygame.image.load(resource_path(r"images/ship.bmp"))
     self.rect=self.image.get_rect()
     self.rect.midbottom=self.screen_rect.midbottom
     self.moving_right=False

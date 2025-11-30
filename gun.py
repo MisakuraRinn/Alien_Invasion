@@ -1,5 +1,13 @@
 #coding=GBK
 import pygame
+import os, sys
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):   # PyInstaller 打包后的临时目录
+        base = sys._MEIPASS
+    else:
+        base = os.path.dirname(__file__)
+    return os.path.join(base, relative_path)
 class Gun:
   def __init__(self,ai_game):
     self.ai_game=ai_game
@@ -79,25 +87,25 @@ class Gun:
         'bullet_can_rebound_number':0
       }
     }
-    for i in range(1,8):self.weapons["pistol"]['se_shot'].append(pygame.mixer.Sound(f"voices/pistol/Gun_Pistol_Shot{i}.ogg"))
-    self.weapons["pistol"]['se_reload'].append(pygame.mixer.Sound("voices/pistol/Gun_Reload_Weapon07.ogg"))
-    self.weapons["pistol"]['se_select'].append(pygame.mixer.Sound("voices/pistol/Gun_DrawSelect_Pistol3.ogg"))
+    for i in range(1,8):self.weapons["pistol"]['se_shot'].append(pygame.mixer.Sound(resource_path(rf"voices/pistol/Gun_Pistol_Shot{i}.ogg")))
+    self.weapons["pistol"]['se_reload'].append(pygame.mixer.Sound(resource_path(r"voices/pistol/Gun_Reload_Weapon07.ogg")))
+    self.weapons["pistol"]['se_select'].append(pygame.mixer.Sound(resource_path(r"voices/pistol/Gun_DrawSelect_Pistol3.ogg")))
     
-    self.weapons["machineGun"]['se_shot'].append(pygame.mixer.Sound("voices/machineGun/K_MachineGun01.ogg"))
-    self.weapons["machineGun"]['se_reload'].append(pygame.mixer.Sound("voices/machineGun/Gun_Reload_Weapon03.ogg"))
-    self.weapons["machineGun"]['se_select'].append(pygame.mixer.Sound("voices/machineGun/Gun_DrawSelect_Weapon08.ogg"))
+    self.weapons["machineGun"]['se_shot'].append(pygame.mixer.Sound(resource_path(r"voices/machineGun/K_MachineGun01.ogg")))
+    self.weapons["machineGun"]['se_reload'].append(pygame.mixer.Sound(resource_path(r"voices/machineGun/Gun_Reload_Weapon03.ogg")))
+    self.weapons["machineGun"]['se_select'].append(pygame.mixer.Sound(resource_path(r"voices/machineGun/Gun_DrawSelect_Weapon08.ogg")))
     
-    for i in range(1,8):self.weapons["shotGun"]['se_shot'].append(pygame.mixer.Sound(f"voices/shotGun/Shotgun_Shot{i}.ogg"))
-    self.weapons["shotGun"]['se_reload'].append(pygame.mixer.Sound("voices/shotGun/Gun_Reload_Weapon02.ogg"))
-    self.weapons["shotGun"]['se_select'].append(pygame.mixer.Sound("voices/shotGun/Gun_DrawSelect_Weapon02.ogg"))
+    for i in range(1,8):self.weapons["shotGun"]['se_shot'].append(pygame.mixer.Sound(resource_path(rf"voices/shotGun/Shotgun_Shot{i}.ogg")))
+    self.weapons["shotGun"]['se_reload'].append(pygame.mixer.Sound(resource_path(r"voices/shotGun/Gun_Reload_Weapon02.ogg")))
+    self.weapons["shotGun"]['se_select'].append(pygame.mixer.Sound(resource_path(r"voices/shotGun/Gun_DrawSelect_Weapon02.ogg")))
     
-    for i in range(1,3):self.weapons["AssaultRifle"]['se_shot'].append(pygame.mixer.Sound(f"voices/AssaultRifle/Gun_AssaultRifle_PowerShot{i}.ogg"))
-    self.weapons["AssaultRifle"]['se_reload'].append(pygame.mixer.Sound("voices/AssaultRifle/Gun_Reload_Weapon19.ogg"))
-    self.weapons["AssaultRifle"]['se_select'].append(pygame.mixer.Sound("voices/AssaultRifle/Gun_DrawSelect_Weapon06.ogg"))
+    for i in range(1,3):self.weapons["AssaultRifle"]['se_shot'].append(pygame.mixer.Sound(resource_path(rf"voices/AssaultRifle/Gun_AssaultRifle_PowerShot{i}.ogg")))
+    self.weapons["AssaultRifle"]['se_reload'].append(pygame.mixer.Sound(resource_path(r"voices/AssaultRifle/Gun_Reload_Weapon19.ogg")))
+    self.weapons["AssaultRifle"]['se_select'].append(pygame.mixer.Sound(resource_path(r"voices/AssaultRifle/Gun_DrawSelect_Weapon06.ogg")))
     
-    for i in range(1,9):self.weapons["GrenadeLaucher"]['se_shot'].append(pygame.mixer.Sound(f"voices/GrenadeLaucher/GrenadeLauncher_Shot{i}.ogg"))
-    self.weapons["GrenadeLaucher"]['se_reload'].append(pygame.mixer.Sound("voices/GrenadeLaucher/Gun_Reload_Weapon04.ogg"))
-    self.weapons["GrenadeLaucher"]['se_select'].append(pygame.mixer.Sound("voices/GrenadeLaucher/Gun_DrawSelect_Weapon10.ogg"))
+    for i in range(1,9):self.weapons["GrenadeLaucher"]['se_shot'].append(pygame.mixer.Sound(resource_path(rf"voices/GrenadeLaucher/GrenadeLauncher_Shot{i}.ogg")))
+    self.weapons["GrenadeLaucher"]['se_reload'].append(pygame.mixer.Sound(resource_path(r"voices/GrenadeLaucher/Gun_Reload_Weapon04.ogg")))
+    self.weapons["GrenadeLaucher"]['se_select'].append(pygame.mixer.Sound(resource_path(r"voices/GrenadeLaucher/Gun_DrawSelect_Weapon10.ogg")))
     print("ckp")
   def initialize_dynamic_settings(self):
     self.weapons={
@@ -107,9 +115,9 @@ class Gun:
         'se_reload':[],
         'can_use':True,
         'max_ammo':12,
-        'shoot_interval':0.5,
-        'reload_interval':0.05,
-        'bullet_max_directX':0.2,
+        'shoot_interval':0.3,
+        'reload_interval':0.03,
+        'bullet_max_directX':0.15,
         'number_of_bullets_in_one_fire':1,
         'bullet_can_through_aliens_number':1,
         'bullet_can_explode_number':0,
@@ -162,40 +170,41 @@ class Gun:
         'se_select':[],
         'se_shot':[],
         'se_reload':[],
+        'can_use':False,
         'max_ammo':3,
         'shoot_interval':1,
         'reload_interval':1,
         'bullet_max_directX':0.1,
         'number_of_bullets_in_one_fire':1,
         'bullet_can_through_aliens_number':1,
-        'bullet_can_explode_number':10,
-        'bullet_can_rebound_number':3
+        'bullet_can_explode_number':5,
+        'bullet_can_rebound_number':1
       }
     }
-    for i in range(1,8):self.weapons["pistol"]['se_shot'].append(pygame.mixer.Sound(f"voices/pistol/Gun_Pistol_Shot{i}.ogg"))
-    self.weapons["pistol"]['se_reload'].append(pygame.mixer.Sound("voices/pistol/Gun_Reload_Weapon07.ogg"))
-    self.weapons["pistol"]['se_select'].append(pygame.mixer.Sound("voices/pistol/Gun_DrawSelect_Pistol3.ogg"))
+    for i in range(1,8):self.weapons["pistol"]['se_shot'].append(pygame.mixer.Sound(resource_path(rf"voices/pistol/Gun_Pistol_Shot{i}.ogg")))
+    self.weapons["pistol"]['se_reload'].append(pygame.mixer.Sound(resource_path(r"voices/pistol/Gun_Reload_Weapon07.ogg")))
+    self.weapons["pistol"]['se_select'].append(pygame.mixer.Sound(resource_path(r"voices/pistol/Gun_DrawSelect_Pistol3.ogg")))
     
-    self.weapons["machineGun"]['se_shot'].append(pygame.mixer.Sound("voices/machineGun/K_MachineGun01.ogg"))
-    self.weapons["machineGun"]['se_reload'].append(pygame.mixer.Sound("voices/machineGun/Gun_Reload_Weapon03.ogg"))
-    self.weapons["machineGun"]['se_select'].append(pygame.mixer.Sound("voices/machineGun/Gun_DrawSelect_Weapon08.ogg"))
+    self.weapons["machineGun"]['se_shot'].append(pygame.mixer.Sound(resource_path(r"voices/machineGun/K_MachineGun01.ogg")))
+    self.weapons["machineGun"]['se_reload'].append(pygame.mixer.Sound(resource_path(r"voices/machineGun/Gun_Reload_Weapon03.ogg")))
+    self.weapons["machineGun"]['se_select'].append(pygame.mixer.Sound(resource_path(r"voices/machineGun/Gun_DrawSelect_Weapon08.ogg")))
     
-    for i in range(1,8):self.weapons["shotGun"]['se_shot'].append(pygame.mixer.Sound(f"voices/shotGun/Shotgun_Shot{i}.ogg"))
-    self.weapons["shotGun"]['se_reload'].append(pygame.mixer.Sound("voices/shotGun/Gun_Reload_Weapon02.ogg"))
-    self.weapons["shotGun"]['se_select'].append(pygame.mixer.Sound("voices/shotGun/Gun_DrawSelect_Weapon02.ogg"))
+    for i in range(1,8):self.weapons["shotGun"]['se_shot'].append(pygame.mixer.Sound(resource_path(rf"voices/shotGun/Shotgun_Shot{i}.ogg")))
+    self.weapons["shotGun"]['se_reload'].append(pygame.mixer.Sound(resource_path(r"voices/shotGun/Gun_Reload_Weapon02.ogg")))
+    self.weapons["shotGun"]['se_select'].append(pygame.mixer.Sound(resource_path(r"voices/shotGun/Gun_DrawSelect_Weapon02.ogg")))
     
-    for i in range(1,3):self.weapons["AssaultRifle"]['se_shot'].append(pygame.mixer.Sound(f"voices/AssaultRifle/Gun_AssaultRifle_PowerShot{i}.ogg"))
-    self.weapons["AssaultRifle"]['se_reload'].append(pygame.mixer.Sound("voices/AssaultRifle/Gun_Reload_Weapon19.ogg"))
-    self.weapons["AssaultRifle"]['se_select'].append(pygame.mixer.Sound("voices/AssaultRifle/Gun_DrawSelect_Weapon06.ogg"))
+    for i in range(1,3):self.weapons["AssaultRifle"]['se_shot'].append(pygame.mixer.Sound(resource_path(rf"voices/AssaultRifle/Gun_AssaultRifle_PowerShot{i}.ogg")))
+    self.weapons["AssaultRifle"]['se_reload'].append(pygame.mixer.Sound(resource_path(r"voices/AssaultRifle/Gun_Reload_Weapon19.ogg")))
+    self.weapons["AssaultRifle"]['se_select'].append(pygame.mixer.Sound(resource_path(r"voices/AssaultRifle/Gun_DrawSelect_Weapon06.ogg")))
     
-    for i in range(1,9):self.weapons["GrenadeLaucher"]['se_shot'].append(pygame.mixer.Sound(f"voices/GrenadeLaucher/GrenadeLauncher_Shot{i}.ogg"))
-    self.weapons["GrenadeLaucher"]['se_reload'].append(pygame.mixer.Sound("voices/GrenadeLaucher/Gun_Reload_Weapon04.ogg"))
-    self.weapons["GrenadeLaucher"]['se_select'].append(pygame.mixer.Sound("voices/GrenadeLaucher/Gun_DrawSelect_Weapon10.ogg"))
+    for i in range(1,9):self.weapons["GrenadeLaucher"]['se_shot'].append(pygame.mixer.Sound(resource_path(rf"voices/GrenadeLaucher/GrenadeLauncher_Shot{i}.ogg")))
+    self.weapons["GrenadeLaucher"]['se_reload'].append(pygame.mixer.Sound(resource_path(r"voices/GrenadeLaucher/Gun_Reload_Weapon04.ogg")))
+    self.weapons["GrenadeLaucher"]['se_select'].append(pygame.mixer.Sound(resource_path(r"voices/GrenadeLaucher/Gun_DrawSelect_Weapon10.ogg")))
     self.current_gun=self.weapons['pistol']
     
   def weapon_level_up(self,weapon,key,value):
     """升级武器，升级武器属性，升级数值"""
-    self.weapons[weapon][key]+=value
+    self.weapons[weapon][key]=value
   def change_weapon(self,weapon):
     # 播放换枪音效
     # print("play changeGUn")
