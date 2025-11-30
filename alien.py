@@ -1,5 +1,7 @@
 #coding=GBK
 import pygame
+import random
+import math
 from pygame.sprite import Sprite
 class Alien(Sprite):
   """表示单个外星人的类"""
@@ -9,7 +11,8 @@ class Alien(Sprite):
     
     self.image=pygame.image.load("images/alien.bmp")
     self.rect=self.image.get_rect()
-    
+    self.health=random.randint(int(1+math.log2(ai_game.stats.level)),ai_game.stats.level+3)
+    print(self.health)
     self.rect.x=self.rect.width
     self.rect.y=self.rect.height
     self.settings=ai_game.settings

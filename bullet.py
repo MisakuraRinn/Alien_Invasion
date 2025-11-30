@@ -13,11 +13,13 @@ class Bullet(Sprite):
     self.color=self.settings.bullet_color
     self.rect=pygame.Rect(0,0,self.settings.bullet_width,self.settings.bullet_height)
     self.rect.midtop=ai_game.ship.rect.midtop
+    self.health=ai_game.gun.current_gun['bullet_can_through_aliens_number']
+    self.bullet_can_rebound_number=ai_game.gun.current_gun['bullet_can_rebound_number']
+    #是否是弹片
+    self.is_piece=False
+    
     #二元组，用来计算子弹速度，模长小于1
     
-    # self.current_max_directX=0
-    # self.current_min_directX=0
-    # self.current_mid_directX=0
     if ai_game.ship.moving_right and not ai_game.ship.moving_left:
       # print("shoot right")
       self.current_mid_directX=0.3
