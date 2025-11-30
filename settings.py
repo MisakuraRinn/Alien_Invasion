@@ -7,7 +7,7 @@ class Settings:
   def __init__(self,ai_game):
     # 屏幕设置
     self.screen_width=800
-    self.screen_height=1200
+    self.screen_height=1000
     self.bg_color=(230,230,230)
     self.ai_game=ai_game   # 引用主游戏对象，方便访问 stats 等
 
