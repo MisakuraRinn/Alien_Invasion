@@ -55,7 +55,10 @@ class AlienInvasion:
     
     self.is_shooting=False
     self.shoot_time1=time.time()
-    
+    if os.path.exists("data.txt"):      
+      with open("data.txt", "r", encoding="GBK") as f:
+        self.stats.high_score = int(f.read())
+        self.sb.prep_high_score()
     self.reload_time1=time.time()
     self.is_reloading=False
     self._create_fleet()
@@ -317,7 +320,8 @@ class AlienInvasion:
       self.ship.moving_left=True
     if event.key==pygame.K_q:
       print("exit")
-      # threading.
+      with open("data.txt", "w", encoding="GBK") as f:
+        f.write(str(self.stats.high_score))
       sys.exit()
     if event.key==pygame.K_SPACE and self.game_active:
       self.is_shooting=True
